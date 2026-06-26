@@ -1,0 +1,10 @@
+# Ignore rules globally or for specific resources
+
+# KSV-0056: Role permits write privileges on sensitive resources (Services, Ingresses, NetworkPolicies)
+# This is a deliberate, approved permission for the CI/CD deployment service account.
+KSV-0056
+
+# Ignore partial Kustomize patches which do not contain full deployment specs
+# (Kustomize strategic merge patches trigger false positives when scanned as standalone objects)
+overlays/dev/patches/replicas.yaml
+overlays/prod/patches/replicas-resources.yaml
