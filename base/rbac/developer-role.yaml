@@ -6,7 +6,7 @@ metadata:
     platform.blueprint/component: rbac
 rules:
   - apiGroups: [""]
-    resources: ["pods", "pods/log", "pods/status", "services", "configmaps", "persistentvolumeclaims"]
+    resources: ["pods", "pods/log", "pods/status", "configmaps", "persistentvolumeclaims"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: ["apps"]
     resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
@@ -14,10 +14,10 @@ rules:
   - apiGroups: ["autoscaling"]
     resources: ["horizontalpodautoscalers"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Read-only access to networking configuration (avoids unauthorized routing bypass)
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-  # Read-only access to infrastructure secrets
-  - apiGroups: [""]
-    resources: ["secrets"]
     verbs: ["get", "list", "watch"]
