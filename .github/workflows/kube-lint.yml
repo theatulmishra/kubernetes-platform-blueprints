@@ -41,6 +41,7 @@ jobs:
         uses: aquasecurity/trivy-action@v0.35.0
         with:
           scan-type: 'config'
+          trivy-config: trivy.yaml
           format: 'table'
           exit-code: '1' # Break the build if severity is critical/high. Change to 0 to just report.
           severity: 'HIGH,CRITICAL'

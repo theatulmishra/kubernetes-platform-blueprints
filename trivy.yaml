@@ -1,0 +1,4 @@
+scan:
+  skip-dirs:
+    - overlays/dev/patches
+    - overlays/prod/patches
