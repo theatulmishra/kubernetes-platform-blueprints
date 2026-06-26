@@ -24,7 +24,7 @@ jobs:
         uses: docker://ghcr.io/yannh/kubeconform:latest-alpine
         with:
           entrypoint: '/kubeconform'
-          args: '-summary -ignore-filename-pattern kustomization.yaml -verbose base/ overlays/'
+          args: '-summary -strict -ignore-missing-schemas -ignore-filename-pattern kustomization.yaml -schema-location default -schema-location "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json" -verbose base/ overlays/'
 
       # Scan configuration files for security vulnerabilities
       - name: Run Trivy Config Vulnerability Scan

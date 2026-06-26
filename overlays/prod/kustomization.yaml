@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../../base
   - patches/pdb.yaml
+  - namespace.yaml
 
 namespace: prod-platform
 

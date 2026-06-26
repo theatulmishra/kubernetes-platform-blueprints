@@ -16,6 +16,7 @@ spec:
         app: secure-app
     spec:
       # Enforce Pod-level security context
+      automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001

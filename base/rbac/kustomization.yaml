@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - developer-role.yaml
   - ci-cd-serviceaccount.yaml
+  - namespace-limits.yaml
