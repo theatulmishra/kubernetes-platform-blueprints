@@ -19,12 +19,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Validate Kubernetes schemas using Kubeconform
+      # Compile Kustomize overlays for validation
+      - name: Build Kustomize Overlays
+        run: |
+          mkdir -p build/
+          kubectl kustomize overlays/dev > build/dev-rendered.yaml
+          kubectl kustomize overlays/prod > build/prod-rendered.yaml
+
+      # Validate fully-rendered Kubernetes schemas using Kubeconform
       - name: Run Kubeconform Linter
-        uses: docker://ghcr.io/yannh/kubeconform:latest-alpine
-        with:
-          entrypoint: '/kubeconform'
-          args: '-summary -strict -ignore-missing-schemas -ignore-filename-pattern kustomization.yaml -schema-location default -schema-location "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json" -verbose base/ overlays/'
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/manifests ghcr.io/yannh/kubeconform:latest-alpine \
+            -summary -strict -ignore-missing-schemas \
+            -schema-location default \
+            -schema-location "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json" \
+            -verbose \
+            /manifests/build/dev-rendered.yaml /manifests/build/prod-rendered.yaml
 
       # Scan configuration files for security vulnerabilities
       - name: Run Trivy Config Vulnerability Scan
