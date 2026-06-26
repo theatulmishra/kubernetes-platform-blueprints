@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: platform-app-alerts
+  labels:
+    platform.blueprint/component: monitoring
+    role: alert-rules
+spec:
+  groups:
+    - name: application-health.rules
+      rules:
+        - alert: PodCrashLooping
+          expr: rate(kube_pod_container_status_restarts_total{namespace="default"}[5m]) * 60 > 2
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.pod }} is crash looping"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted more than 2 times in the last 5 minutes."
+        - alert: HighRequestLatency
+          expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{app="secure-app"}[5m])) by (le)) > 2
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "99th percentile request latency is high"
+            description: "The 99th percentile HTTP latency for {{ $labels.app }} is above 2 seconds for 2 minutes."

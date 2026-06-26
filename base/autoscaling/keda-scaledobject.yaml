@@ -1,0 +1,23 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: platform-app-keda
+  labels:
+    platform.blueprint/component: autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: secure-app-deployment
+  minReplicaCount: 2
+  maxReplicaCount: 15
+  cooldownPeriod: 300
+  pollingInterval: 30
+  triggers:
+    - type: prometheus
+      metadata:
+        # Scale based on rate of incoming HTTP requests scraped by Prometheus
+        serverAddress: http://prometheus-k8s.monitoring.svc.cluster.local:9090
+        metricName: http_requests_total
+        query: sum(rate(http_requests_total{app="secure-app"}[2m]))
+        threshold: '50'

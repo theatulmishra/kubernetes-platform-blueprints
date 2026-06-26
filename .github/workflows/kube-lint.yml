@@ -1,0 +1,36 @@
+name: Kubernetes Lint and Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-scan:
+    name: Validate and Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Validate Kubernetes schemas using Kubeconform
+      - name: Run Kubeconform Linter
+        uses: docker://ghcr.io/yannh/kubeconform:latest-alpine
+        with:
+          entrypoint: '/kubeconform'
+          args: '-summary -ignore-filename-pattern kustomization.yaml -verbose base/ overlays/'
+
+      # Scan configuration files for security vulnerabilities
+      - name: Run Trivy Config Vulnerability Scan
+        uses: aquasecurity/trivy-action@v0.35.0
+        with:
+          scan-type: 'config'
+          format: 'table'
+          exit-code: '1' # Break the build if severity is critical/high. Change to 0 to just report.
+          severity: 'HIGH,CRITICAL'

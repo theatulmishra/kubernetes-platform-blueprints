@@ -1,0 +1,30 @@
+# Kubernetes configurations
+.kube/
+kubeconfig
+kubeconfig.yaml
+*kubeconfig*
+
+# Local environment & secrets
+.env
+.env.*
+*.secret.yaml
+*secret.yaml
+*secrets.yaml
+*.pem
+*.key
+*.cert
+
+# Kustomize / Helm build outputs
+build/
+dist/
+rendered.yaml
+rendered-*.yaml
+charts/
+.helm/
+
+# Temporary and backup files
+*.tmp
+*.bak
+*~
+.DS_Store
+Thumbs.db
